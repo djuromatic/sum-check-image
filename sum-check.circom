@@ -32,14 +32,6 @@ template Example (N, M) {
 
     c <== sum * b;
 
-
-    // var unused = 4;
-    // c <== a[N][M] * b;
-    // assert(a[N][M] > 2);
-    
-    // component hash = Poseidon(2);
-    // hash.inputs[0] <== a[N][M];
-
     log("hash", c);
 }
 
