@@ -1,6 +1,6 @@
 extern crate image;
 
-use image::{DynamicImage, GenericImageView, Pixel, Rgba};
+use image::{GenericImageView, Pixel};
 
 pub fn main() {
     // Open an image file
@@ -26,6 +26,8 @@ pub fn main() {
             rgb_values.push([rgb[0], rgb[1], rgb[2]]);
         }
     }
+
+    println!("pixel number {:?}", rgb_values.len());
 
     // Print the RGB values for the first few pixels
     for i in 0..10 {
