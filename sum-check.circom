@@ -26,7 +26,13 @@ template Example (N, M) {
             firstField[i][j].a <== a[i][j];
             firstField[i][j].b <== a[i][j+1];
 
-            sum += firstField[i][j].c;
+            hash[i][j] = Poseidon(2);
+            hash[i][j].inputs[0] <== firstField[i][j].c;
+            hash[i][j].inputs[1] <== b;
+
+
+
+            sum += hash[i][j].out;
         } 
     }
 
