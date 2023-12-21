@@ -19,29 +19,33 @@ template CheckSum (N, M) {
     var sum = 0x0;
 
     component sumField[N][M];
-    component hash[N][M];
+    component hash;
+    // component hash[N][M];
     for(var i = 0; i < N; i++) {
         for (var j = 0; j < M; j+=2){
             sumField[i][j] = Sum();
             sumField[i][j].a <== a[i][j];
             sumField[i][j].b <== a[i][j+1];
 
-            hash[i][j] = Poseidon(2);
-            hash[i][j].inputs[0] <== sumField[i][j].c;
-            hash[i][j].inputs[1] <== b;
+           // hash[i][j] = Poseidon(2);
+           // hash[i][j].inputs[0] <== sumField[i][j].c;
+           // hash[i][j].inputs[1] <== b;
+           // sum += hash[i][j].out;
 
-
-
-            sum += hash[i][j].out;
+            sum += sumField[i][j].c;
         } 
     }
 
-    c <== sum;
+    hash = Poseidon(2);
+    hash.inputs[0] <== sum;
+    hash.inputs[1] <== b;
+
+    c <== hash.out;
 
     log("hash", c);
 }
 
-component main = CheckSum(4, 8);
+component main = CheckSum(250, 256);
 
 /* INPUT = {
     "a": [["0","1","0","0","1","1","0","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"]],

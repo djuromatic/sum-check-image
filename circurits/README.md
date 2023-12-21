@@ -1,5 +1,5 @@
 to generate proof run
 
 ```shell
-./generate.sh sum-check ./tmp/proofs
+./generate.sh sum-check
 ```
