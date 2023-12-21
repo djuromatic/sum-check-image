@@ -10,10 +10,16 @@ fi
 circuit_name=$1
 proofs_directory=$2
 
+echo "######### Compiling Circuit ###########"
 ./scripts/compile.sh ${circuit_name} ${proofs_directory}
+echo "######### Computing witness ###########"
 ./scripts/compute-witness.sh ${circuit_name} ${proofs_directory}
 
+echo "######### Power of Tau Ceremony ###########"
 ./scripts/powers-of-tau-ceremony.sh ${circuit_name} ${proofs_directory}
+echo "######### Proof Generate ###########"
 ./scripts/generate-proof.sh ${circuit_name} ${proofs_directory}
+echo "######### Proof Verify ###########"
 ./scripts/verify-proof.sh ${circuit_name} ${proofs_directory}
+echo "######### Generate Solidity File ###########"
 ./scripts/generate-solidity.sh ${circuit_name} ${proofs_directory}
