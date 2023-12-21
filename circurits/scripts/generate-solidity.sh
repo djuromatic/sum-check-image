@@ -11,3 +11,5 @@ circuit_name=$1
 proofs_directory="tmp/${circuit_name}"
 
 snarkjs zkey export solidityverifier ${proofs_directory}/${circuit_name}_0001.zkey ${proofs_directory}/verifier.sol
+
+cp ${proofs_directory}/verifier.sol ../contracts/src/${circuit_name}.sol
