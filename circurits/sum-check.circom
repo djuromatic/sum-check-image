@@ -3,7 +3,7 @@ pragma circom 2.1.6;
 include "circomlib/circuits/poseidon.circom";
 // include "https://github.com/0xPARC/circom-secp256k1/blob/master/circuits/bigint.circom";
 
-template Multiplier2() {
+template Sum() {
     signal input a;
     signal input b;
     signal output c;
@@ -11,7 +11,7 @@ template Multiplier2() {
  }
 
 
-template Example (N, M) {
+template CheckSum (N, M) {
     signal input a[N][M];
     signal input b;
     signal output c;
@@ -22,7 +22,7 @@ template Example (N, M) {
     component hash[N][M];
     for(var i = 0; i < N; i++) {
         for (var j = 0; j < M; j+=2){
-            sumField[i][j] = Multiplier2();
+            sumField[i][j] = Sum();
             sumField[i][j].a <== a[i][j];
             sumField[i][j].b <== a[i][j+1];
 
@@ -41,7 +41,7 @@ template Example (N, M) {
     log("hash", c);
 }
 
-component main = Example(4, 8);
+component main = CheckSum(4, 8);
 
 /* INPUT = {
     "a": [["0","1","0","0","1","1","0","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"]],

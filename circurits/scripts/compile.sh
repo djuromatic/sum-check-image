@@ -10,6 +10,12 @@ fi
 circuit_name=$1
 proofs_directory=$2
 
+# Check if the "tmp" folder exists, create it if not
+if [ ! -d "tmp" ]; then
+	echo "Creating 'tmp' directory..."
+	mkdir tmp
+fi
+
 # Display friendly messages
 echo "Cleaning up existing proofs directory..."
 rm -rf ${proofs_directory}
