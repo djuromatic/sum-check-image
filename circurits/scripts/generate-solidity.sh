@@ -11,5 +11,8 @@ circuit_name=$1
 proofs_directory="tmp/${circuit_name}"
 
 snarkjs zkey export solidityverifier ${proofs_directory}/${circuit_name}_0001.zkey ${proofs_directory}/verifier.sol
+# Update the solidity version in the Solidity verifier
+sed 's/0.6.11;/0.8.19;/g' ${proofs_directory}/verifier.sol >>${proofs_directory}/sumcheckVerifier.sol
+rm ${proofs_directory}/verifier.sol
 
-cp ${proofs_directory}/verifier.sol ../contracts/src/${circuit_name}.sol
+cp ${proofs_directory}/sumcheckVerifier.sol ../contracts/src/sumcheckVerifier.sol
