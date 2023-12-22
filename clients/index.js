@@ -1,6 +1,6 @@
-const snarkjs = require("snarkjs");
+const { groth16 } = require("snarkjs");
 const fs = require("fs");
-require('dotenv').config()
+require('dotenv').config();
 const contract = require("../contracts/out/SumCheck.sol/SumCheck.json");
 const { ethers } = require("ethers");
 
@@ -20,10 +20,51 @@ const sumcheckContract = new ethers.Contract(
 );
 
 async function run() {
-  const { proof, publicSignals } = await snarkjs.groth16.fullProve({
-    "a": [["0", "1", "0", "0", "1", "1", "0", "1"], ["1", "0", "1", "1", "0", "0", "1", "1"], ["1", "0", "1", "1", "0", "0", "1", "1"], ["1", "0", "1", "1", "0", "0", "1", "1"]],
-    "b": "0x2F"
-  }, "../circurits/tmp/sum-check_js/sum-check.wasm", "../circurits/tmp/sum-check_0001.zkey");
+  const { proof, publicSignals } = await groth16.fullProve({
+    "a": [
+      [
+        "0",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "1",
+        "0",
+        "1",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "1",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "1"
+      ]
+    ],
+    "b": "0x2C"
+  }, "../circurits/tmp/sum-check/sum-check_js/sum-check.wasm", "../circurits/tmp/sum-check/sum-check_0001.zkey");
 
   console.log("Proof: ");
   console.log(JSON.stringify(proof, null, 1));
@@ -31,18 +72,8 @@ async function run() {
   console.log("Public inputs: ");
   console.log(JSON.stringify(publicSignals, null, 1));
 
-  const vKey = JSON.parse(fs.readFileSync("../circurits/tmp/verification_key.json"));
-
-  const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
-
-  if (res === true) {
-    console.log("Verification OK");
-  } else {
-    console.log("Invalid proof");
-  }
-
-  const calldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
-
+  const calldata = await groth16.exportSolidityCallData(proof, publicSignals);
+  console.log(calldata);
   const argv = calldata
     .replace(/["[\]\s]/g, "")
     .split(",")
