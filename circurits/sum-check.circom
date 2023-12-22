@@ -11,29 +11,29 @@ template Sum() {
  }
 
 
-template CheckSum (N, M) {
-    signal input a[N][M];
+template CheckSum (N) {
+    signal input a[N];
     signal input b;
     signal output c;
 
     var sum = 0x0;
 
-    component sumField[N][M];
+    component sumField[N];
     component hash;
     // component hash[N][M];
-    for(var i = 0; i < N; i++) {
-        for (var j = 0; j < M; j+=2){
-            sumField[i][j] = Sum();
-            sumField[i][j].a <== a[i][j];
-            sumField[i][j].b <== a[i][j+1];
+    for(var i = 0; i < N; i+= 2 ) {
+            assert(a[i] >= 0 && a[i] <= 255);
+            assert(a[i + 1] >= 0 && a[i + 1] <= 255);
+            sumField[i] = Sum();
+            sumField[i].a <== a[i];
+            sumField[i].b <== a[i + 1];
 
            // hash[i][j] = Poseidon(2);
            // hash[i][j].inputs[0] <== sumField[i][j].c;
            // hash[i][j].inputs[1] <== b;
            // sum += hash[i][j].out;
 
-            sum += sumField[i][j].c;
-        } 
+            sum += sumField[i].c;
     }
 
     hash = Poseidon(2);
@@ -45,7 +45,7 @@ template CheckSum (N, M) {
     log("hash", c);
 }
 
-component main = CheckSum(250, 256);
+component main = CheckSum(3840);
 
 /* INPUT = {
     "a": [["0","1","0","0","1","1","0","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"], ["1","0","1","1","0","0","1","1"]],
