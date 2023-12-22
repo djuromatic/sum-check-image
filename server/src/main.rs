@@ -1,17 +1,36 @@
-use actix_web::{
-    web::{self, Bytes},
-    App, Error, HttpResponse, HttpServer,
-};
+use actix_web::{post, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
+use serde::Serialize;
 
-async fn upload_image(payload: Bytes) -> Result<HttpResponse, Error> {
+#[derive(Serialize, Debug)]
+struct ImageData {
+    a: Vec<u8>,
+    length: usize,
+}
+
+#[post("/upload")]
+async fn index(payload: Bytes) -> Result<impl Responder, Error> {
     if payload.is_empty() {
         return Ok(HttpResponse::BadRequest().body("No image uploaded"));
     }
     let image = image::load_from_memory(&payload).expect("Error loading from memory");
     let resized_image = resize_image(image, 64, 64);
     let rgb_values = get_rgb_values(&resized_image);
-    return Ok(HttpResponse::Ok().body(format!("{:?}", rgb_values)));
+    let data = ImageData {
+        a: rgb_values.clone(),
+        length: rgb_values.len(),
+    };
+    Ok(HttpResponse::Ok().body(format!("{:?}", data)))
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    use actix_web::{App, HttpServer};
+
+    HttpServer::new(|| App::new().service(index))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
 
 fn resize_image(image: DynamicImage, width: u32, height: u32) -> DynamicImage {
@@ -28,14 +47,4 @@ fn get_rgb_values(image: &DynamicImage) -> Vec<u8> {
     }
 
     rgb_values
-}
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new().service(web::resource("/upload").route(web::post().to(upload_image)))
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
 }
