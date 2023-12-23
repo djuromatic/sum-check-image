@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{http::header, post, web::Bytes, Error, HttpResponse, Responder};
+use actix_web::{get, http::header, post, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
 use serde::Serialize;
 
@@ -24,6 +24,11 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
     Ok(HttpResponse::Ok().body(format!("{:?}", data)))
 }
 
+#[get("/health")]
+async fn health() -> Result<impl Responder, Error> {
+    Ok(HttpResponse::Ok())
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
@@ -39,7 +44,7 @@ async fn main() -> std::io::Result<()> {
             ])
             .max_age(3600);
 
-        App::new().wrap(cors).service(index)
+        App::new().wrap(cors).service(index).service(health)
     })
     .bind(("127.0.0.1", 8082))?
     .run()
