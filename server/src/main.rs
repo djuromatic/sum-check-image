@@ -2,6 +2,7 @@ use actix_cors::Cors;
 use actix_web::{get, http::header, post, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
 use serde::Serialize;
+use std::env;
 
 #[derive(Serialize, Debug)]
 struct ImageData {
@@ -26,13 +27,17 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
 
 #[get("/health")]
 async fn health() -> Result<impl Responder, Error> {
-    Ok(HttpResponse::Ok())
+    println!("Healthy and wealthy");
+    Ok(HttpResponse::Ok().body(format!("Healthy and wealthy")))
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
 
+    let args: Vec<String> = env::args().collect();
+    let port_number: u16 = args[1].parse().expect("Not a number");
+    println!("Port number is {}", port_number);
     HttpServer::new(|| {
         let cors = Cors::default()
             .allow_any_origin()
@@ -46,7 +51,7 @@ async fn main() -> std::io::Result<()> {
 
         App::new().wrap(cors).service(index).service(health)
     })
-    .bind(("127.0.0.1", 8082))?
+    .bind(("127.0.0.1", port_number))?
     .run()
     .await
 }
