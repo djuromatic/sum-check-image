@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{post, http::header, web::Bytes, Error, HttpResponse, Responder};
+use actix_web::{http::header, post, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
 use serde::Serialize;
 
@@ -28,21 +28,22 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
 async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
 
-    HttpServer::new(||{
+    HttpServer::new(|| {
         let cors = Cors::default()
-              .allowed_origin("*")
-              .allowed_methods(vec!["GET", "POST"])
-              .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-              .allowed_header(header::CONTENT_TYPE)
-              .max_age(3600);
+            .allow_any_origin()
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_headers(vec![
+                header::AUTHORIZATION,
+                header::ACCEPT,
+                header::CONTENT_TYPE,
+            ])
+            .max_age(3600);
 
-        App::new()
-            .wrap(cors)
-            .service(index)
+        App::new().wrap(cors).service(index)
     })
-        .bind(("127.0.0.1", 8082))?
-        .run()
-        .await
+    .bind(("127.0.0.1", 8082))?
+    .run()
+    .await
 }
 
 fn resize_image(image: DynamicImage, width: u32, height: u32) -> DynamicImage {
