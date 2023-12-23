@@ -1,10 +1,10 @@
 use actix_cors::Cors;
 use actix_web::{get, http::header, post, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::env;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Deserialize)]
 struct ImageData {
     a: Vec<u8>,
     length: usize,
@@ -22,7 +22,7 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
         a: rgb_values.clone(),
         length: rgb_values.len(),
     };
-    Ok(HttpResponse::Ok().body(format!("{:?}", data)))
+    Ok(HttpResponse::Ok().json(data))
 }
 
 #[get("/health")]
