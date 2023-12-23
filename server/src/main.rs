@@ -36,9 +36,9 @@ async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
 
     let args: Vec<String> = env::args().collect();
-    let localhost_port_number: u16 = args[1].parse().expect("Not a number");
+    let http_bind = &args[1];
     let http_bind_port_number: u16 = args[2].parse().expect("Not a number");
-    println!("Port number is {}", localhost_port_number);
+    println!("Http bind is {}", http_bind);
     println!("Http bind port number is {}", http_bind_port_number);
     HttpServer::new(|| {
         let cors = Cors::default()
@@ -53,8 +53,7 @@ async fn main() -> std::io::Result<()> {
 
         App::new().wrap(cors).service(index).service(health)
     })
-    .bind(("127.0.0.1", localhost_port_number))?
-    .bind(("0.0.0.0", http_bind_port_number))?
+    .bind((http_bind.clone(), http_bind_port_number))?
     .run()
     .await
 }
