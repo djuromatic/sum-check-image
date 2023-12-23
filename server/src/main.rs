@@ -1,4 +1,5 @@
-use actix_web::{post, web::Bytes, Error, HttpResponse, Responder};
+use actix_cors::Cors;
+use actix_web::{post, http::header, web::Bytes, Error, HttpResponse, Responder};
 use image::{DynamicImage, GenericImageView};
 use serde::Serialize;
 
@@ -27,8 +28,19 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
 async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
 
-    HttpServer::new(|| App::new().service(index))
-        .bind(("127.0.0.1", 8080))?
+    HttpServer::new(||{
+        let cors = Cors::default()
+              .allowed_origin("*")
+              .allowed_methods(vec!["GET", "POST"])
+              .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+              .allowed_header(header::CONTENT_TYPE)
+              .max_age(3600);
+
+        App::new()
+            .wrap(cors)
+            .service(index)
+    })
+        .bind(("127.0.0.1", 8082))?
         .run()
         .await
 }

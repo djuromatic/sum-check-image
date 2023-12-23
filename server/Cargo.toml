@@ -11,3 +11,4 @@ actix-web = "4.4.0"
 futures-util = "0.3.29"
 image = "0.24.7"
 serde = { version = "1.0.193", features = ["derive"] }
+actix-cors = "0.6.5"
