@@ -23,6 +23,7 @@ const ImageUpload: React.FC = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     // Check if the user has MetaMask installed
     if (typeof window.ethereum !== 'undefined') {
+      provider.send('eth_requestAccounts', []);
       console.log('MetaMask is installed!');
     }
     const setupSigner = async () => {
