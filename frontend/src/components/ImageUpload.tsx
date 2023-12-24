@@ -18,9 +18,10 @@ const ImageUpload: React.FC = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [statusText, setStatusText] = useState('Please upload an image');
+  const [logText, setLogText] = useState('');
 
   useEffect(() => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "sepolia")
     // Check if the user has MetaMask installed
     if (typeof window.ethereum !== 'undefined') {
       provider.send('eth_requestAccounts', []);
@@ -82,8 +83,9 @@ const ImageUpload: React.FC = () => {
       const receipt = await tx.wait();
       console.log("Tx ", receipt);
       const event = receipt.events.find((event: { event: string; }) => event.event === "Proof");
-      console.log(event);
       setStatusText(`Result: ${event.args[1]}`);
+      console.log(event);
+      setLogText(`Transaction: ${JSON.stringify(receipt)}`);
     } catch (error) {
       setIsLoading(false);
       setStatusText(`Error: ${error}`);
@@ -109,6 +111,7 @@ const ImageUpload: React.FC = () => {
     setIsLoading(true);
     setStatusText('Uploading image...');
 
+    setLogText("");
     // Set up the form data
     const formData = new FormData();
     formData.append('image', file);
@@ -148,6 +151,7 @@ const ImageUpload: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center">
+      <label>Make sure that metamask is on Sepolia Network</label>
       {/* Hidden File Input */}
       <input
         type="file"
@@ -174,7 +178,9 @@ const ImageUpload: React.FC = () => {
       {isLoading && (
         <div className={styles.loader}></div> // Loader displayed while fetching
       )}
-      <div className="text-center mt-2">{statusText}</div>
+      <div className="text-center mt-2 break-all">{statusText}</div>
+      <br />
+      <div className="text-center mt-2 break-all">{logText}</div>
     </div>
   );
 };
