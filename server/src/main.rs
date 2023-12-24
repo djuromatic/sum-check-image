@@ -7,7 +7,7 @@ use std::env;
 #[derive(Serialize, Debug, Deserialize)]
 struct ImageData {
     a: Vec<u8>,
-    length: usize,
+    b: usize,
 }
 
 #[post("/upload")]
@@ -20,7 +20,7 @@ async fn index(payload: Bytes) -> Result<impl Responder, Error> {
     let rgb_values = get_rgb_values(&resized_image);
     let data = ImageData {
         a: rgb_values.clone(),
-        length: rgb_values.len(),
+        b: rgb_values.len(),
     };
     Ok(HttpResponse::Ok().json(data))
 }

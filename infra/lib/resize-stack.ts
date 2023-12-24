@@ -56,7 +56,6 @@ export class ResizeZK extends cdk.Stack {
 
     // allow these ports for whiteListedIps
     props.whiteListedIps.split(',').forEach((ip) => {
-      securityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.tcp(81), 'nginx admin panel');
       securityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.tcp(22), 'ssh access');
     });
 
@@ -86,7 +85,7 @@ export class ResizeZK extends cdk.Stack {
     });
 
     const resizezkserverRecord = new ARecord(this, `ResizeZKServer-Alias`, {
-      recordName: `resize`,
+      recordName: `zk`,
       zone: hostedZone,
       comment: `DNS Alias for ResizeZK`,
       target: RecordTarget.fromIpAddresses(resizezkserverInstance.instancePublicIp),
